@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>cruddddddddddddd</title>
+        <style>
+           section h2{
+	text-align: center;
+}
+
+form label {
+	display: inline-block;
+	width  : 70px;
+	text-align: left;
+}
+
+
+hr{
+	display: block;
+	margin: 20px auto;
+}
+
+
+input[type=submit] {
+	width: 20%;
+	background-color: #39046b;
+	color: white;
+	padding: 14px 20px;
+	margin: 8px 0;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+  }
+
+table#tblist{
+	border: 1px solid black;
+	width: 100%;
+}
+
+table#tblist thead tr th{
+	border: 0px solid black;
+	padding: 10px;
+	margin: 0px;
+}
+
+table#tblist tbody td{
+	text-align: center;
+	border-bottom: 0px solid black;
+}
+        </style>
+
+        
+	
+        
+    </head>
+    <form id="form">
+        
+            <h2>CRUD Using localStorage</h2>
+        <fieldset>
+            <legend>Student form:</legend>
+            
+                
+                    <label for="Fname">Fname:</label>   
+                     <input type="text" id="Fname"/><br>
+                   
+                
+                
+                    <label for="Lname">Lname:</label>
+                    <input type="text" id="Lname"/><br>
+                    
+                
+                
+                    <label for="Contact">Contact:</label>
+                         <input type="text" id="Contact"/><br>
+                    
+                
+                
+                    <label for="email">Email: </label>
+                    <input type="text" id="email"/><br>
+                   
+                
+                
+                    <input type="submit" value="submit" id="btnsubmit"/>
+                
+            
+        </fieldset>
+    
+    </form>
+    <hr>
+    <table id="tblist"> </table>
+
+
+
+<script type="text/javascript" src="js_crud/jquery.js"></script>
+<script>
+
+
+$(function(){
+    var operation = "Add";
+    var index_selected = -1; 
+    var tbclient = localStorage.getItem("tbclient");
+    tbclient = JSON.parse(tbclient); 
+
+		if(tbclient == null){
+	    tbclient = [];
+		}
+
+		$("#form").on("submit",function(){
+			if(operation == "Add"){
+			    return add(tbclient);
+			}else{
+			    return edit(tbclient,index_selected);
+			}
+		});
+
+		List(tbclient);
+
+		$("#tblist").on("click", ".btnedit", function(){
+	    operation = "Edit";
+	    index_selected = parseInt($(this).attr("alt"));
+			var student = JSON.parse(tbclient[index_selected]);
+	    $("#Fname").val(student.Fname);
+	    $("#Lname").val(student.Lname);
+	    $("#Contact").val(student.Contact);
+	    $("#email").val(student.Email);
+		
+		});
+
+		$("#tblist").on("click", ".btndelete",function(){
+	    index_selected = parseInt($(this).attr("alt"));
+			Delete(tbclient, index_selected);
+	    List(tbclient);
+		});
+});
+
+function add(tbclient){
+
+		var cliente = JSON.stringify({
+        Fname   : $("#Fname").val(),
+        Lname     : $("#Lname").val(),
+        Contact : $("#Contact").val(),
+        Email    : $("#email").val()
+    });
+    tbclient.push(cliente);
+		console.log("tbclient - " + tbclient);
+    localStorage.setItem("tbclient", JSON.stringify(tbclient));
+    alert("data is saved.");
+    return true;
+}
+
+function edit(tbclient,index_selected){
+    tbclient[index_selected] = JSON.stringify({
+            Fname   : $("#Fname").val(),
+            Lname     : $("#Lname").val(),
+            Contact : $("#Contact").val(),
+            Email    : $("#email").val()
+        });
+    localStorage.setItem("tbclient", JSON.stringify(tbclient));
+    alert("data is edit.")
+    operation = "Add"; 
+    return true;
+}
+
+function Delete(tbclient, index_selected){
+    if(confirm("Are you sure to delete this record?"))
+    {
+    tbclient.splice(index_selected, 1);
+    localStorage.setItem("tbclient", JSON.stringify(tbclient));
+    alert("student delete");
+}
+
+}
+
+function List(tbclient){
+    $("#tblist").html("");
+    $("#tblist").html(
+        "<thead>"+
+        "   <tr>"+
+       
+        "   <th>Fname</th>"+
+        "   <th>Lname</th>"+
+        "   <th>Contact</th>"+
+        "   <th>Email</th>"+
+        "   <th>Operations</th>"+
+        "   </tr>"+
+        "</thead>"+
+        "<tbody>"+
+        "</tbody>"
+        );
+    for(var i in tbclient){
+        var student = JSON.parse(tbclient[i]);
+        $("#tblist tbody").append("<tr>");
+       
+        $("#tblist tbody").append("<td>"+student.Fname+"</td>");
+        $("#tblist tbody").append("<td>"+student.Lname+"</td>");
+        $("#tblist tbody").append("<td>"+student.Contact+"</td>");
+        $("#tblist tbody").append("<td>"+student.Email+"</td>");
+        $("#tblist tbody").append("<td><img src='edit1.png' alt='"+i+"'class='btnedit'/><img src='delete1.png' alt='"+i+"' class='btndelete'/></td>");
+        $("#tblist tbody").append("</tr>");
+    }
+}
+
+</script>
+</html>
